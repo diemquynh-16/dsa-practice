@@ -1,4 +1,24 @@
-/*BTVN 5*/
+/*
+Một khách sạn có 17 tầng, mỗi tầng có 12 phòng được gán mã theo cú pháp: P[số tầng].[số phòng]
+Ví dụ: Tầng 3, phòng 3 thì có mã là P3.3.
+Mô tả: Có n đoàn khách, mỗi đoàn gồm m người đến check-in nhận phòng. Vì có những khách lẻ đã đặt phòng trước đó nên không thể xếp cho cả 1 đoàn khách ở cùng một tầng, do đó các khách trong đoàn được xếp ngẫu nhiên vào các phòng trống rời rạc sao cho khi truy cập thông tin vào một phòng, ta có thể biết tên (chữ cái đầu) của khách và địa chỉ phòng của người tiếp theo trong đoàn khách. Biết rằng phòng của các trưởng đoàn luôn ở tầng trệt (tầng 0). Giả sử sức chứa của mỗi phòng là 01 người.
+
+- Vấn đề 1: Cho trước trạng thái các phòng hiện tại của khách sạn với ký hiệu “0” tương ứng với “còn trống” và “1” tương ứng với “đã có người”. 
+Hãy xếp n đoàn khách vào các phòng sao cho không còn phòng nào “còn trống”.
+
+- Vấn đề 2: Nhân viên tiếp tân muốn xác nhận thông tin của một đoàn ngẫu nhiên thì chỉ cần biết được vị trí phòng của trưởng đoàn. 
+Hãy viết một hàm cho phép tiếp tân nhập vào địa chỉ của trưởng đoàn của một đoàn khách bất kỳ, hàm sẽ trả về tất cả thông tin của một đoàn bao gồm tên và vị trí phòng tương ứng của từng khách chung đoàn.
+
+- Vấn đề 3: Biết rằng lúc này có một số khách lẻ check-out nên xuất hiện một số phòng trống. Đột nhiên một số đoàn khách báo cáo với khách sạn về việc bổ sung một số khách mới cần check-in. 
+Hãy bổ sung các vị khách này vào các đoàn tương ứng.
+
+- Vấn đề 4: Một số khách của một số đoàn có công việc bận đột xuất nên check-out ngay trong đêm và tiếp tân muốn kiểm tra lại thông tin của các đoàn như ở Vấn đề 2. 
+Hãy chỉnh sửa thông tin của các đoàn để chuẩn bị cho cuộc kiểm tra của tiếp tân.
+
+- Vấn đề 5: Một đoàn khách (đã check-in trước đó) muốn check-out cho cả đoàn. 
+Hãy thực hiện chỉnh sửa trạng thái của các phòng mà khách đã check-out theo thứ tự và báo cáo trạng thái các phòng của khách sạn lúc này.
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -335,77 +355,100 @@ int main() {
     }; 
     Group groups[10];
 
-    // VẤN ĐỀ 1
-    printf("\n************ PROBLEM 1: ASSIGN GROUPS TO EMPTY ROOMS ************\n");
-    
-    for (int i = 0; i < n; i++) {
-        groups[i].leader = assignGroup(i+1, members[i], names[i]);
-    }
-    printHotel();
+    int select;
 
-    // VẤN ĐỀ 2
-    printf("\n************ PROBLEM 2: CHECK INFO OF A GROUP ************\n");
-    
     int leaderRoom;
-    printf("Enter room of group's leader (from 0 to 11): ");
-    scanf("%d", &leaderRoom);
+    Group *group;
+
+    while (1) {
+        printf("\n1. Assign groups to empty rooms\n2. Check info of a group\n3. Add guests to group\n4. Remove guest from group\n5. Check out a group\n6. Exit\nSelect: ");
+        scanf("%d", &select);
+        getchar();
+
+        if (select == 1) {
+            // VẤN ĐỀ 1
+            printf("\n************ PROBLEM 1: ASSIGN GROUPS TO EMPTY ROOMS ************\n");
     
-    Group *group = findGroup(groups, n, leaderRoom);
+            for (int i = 0; i < n; i++) {
+                groups[i].leader = assignGroup(i+1, members[i], names[i]);
+            }
+            
+            printHotel();
+        }
+
+        else if (select == 2) {
+            // VẤN ĐỀ 2
+            printf("\n************ PROBLEM 2: CHECK INFO OF A GROUP ************\n");
     
-    printGroupInfo(group);
+            printf("Enter room of group's leader (from 0 to 11): ");
+            scanf("%d", &leaderRoom);
+            
+            group = findGroup(groups, n, leaderRoom);
+            
+            printGroupInfo(group);
+        }
 
-    // VẤN ĐỀ 3
-    printf("\n************ PROBLEM 3: ADD GUEST TO GROUP ************\n");
+        else if (select == 3) {
+            // VẤN ĐỀ 3
+            printf("\n************ PROBLEM 3: ADD GUEST TO GROUP ************\n");
     
-    int checkOut;
-    printf("Enter number of single guests checking out: ");
-    scanf("%d", &checkOut);
-    singleCheckout(groups, n, checkOut);
+            int checkOut;
+            printf("Enter number of single guests checking out: ");
+            scanf("%d", &checkOut);
+            singleCheckout(groups, n, checkOut);
 
-    printf("Enter room of group's leader (from 0 to 11): ");
-    scanf("%d", &leaderRoom);
+            printf("Enter room of group's leader (from 0 to 11): ");
+            scanf("%d", &leaderRoom);
     
-    int addCount;
-    printf("Enter the number of new guests to add: ");
-    scanf("%d", &addCount);
+            int addCount;
+            printf("Enter the number of new guests to add: ");
+            scanf("%d", &addCount);
 
-    char addNames[10];
-    printf("Enter guest's name: ");
-    for (int i = 0; i < addCount; i++) {
-        scanf(" %c", &addNames[i]);
-    }
+            char addNames[10];
+            printf("Enter guest's name: ");
+            for (int i = 0; i < addCount; i++) {
+                scanf(" %c", &addNames[i]);
+            }
 
-    group = findGroup(groups, n, leaderRoom);
-    addGuestToGroup(group, addCount, addNames);
-    printGroupInfo(group);
+            group = findGroup(groups, n, leaderRoom);
+            addGuestToGroup(group, addCount, addNames);
+            printGroupInfo(group);
+        }
 
-    // VẤN ĐỀ 4
-    printf("\n************ PROBLEM 4: REMOVE GUEST FROM GROUP ************\n");
+        else if (select == 4) {
+            // VẤN ĐỀ 4
+            printf("\n************ PROBLEM 4: REMOVE GUEST FROM GROUP ************\n");
     
-    int outCount;
+            int outCount;
     
-    printf("Enter number of guests checking out: ");
-    scanf("%d", &outCount);
+            printf("Enter number of guests checking out: ");
+            scanf("%d", &outCount);
 
-    for (int i = 0; i < outCount; i++) {
-        printf("Guest %d - Enter floor & room: ", i + 1);
-        int floor, room;
-        scanf("%d %d", &floor, &room);
-        group = findGroupByGuest(groups, n, floor, room);
-        removeGuestFromGroup(group, floor, room);
-    }
+            for (int i = 0; i < outCount; i++) {
+                printf("Guest %d - Enter floor & room: ", i + 1);
+                int floor, room;
+                scanf("%d %d", &floor, &room);
+                group = findGroupByGuest(groups, n, floor, room);
+                removeGuestFromGroup(group, floor, room);
+            }
 
-    printHotel();
+            printHotel();
+        }
 
-    // VẤN ĐỀ 5
-    printf("\n************ PROBLEM 5: GROUP CHECK OUT ************\n");
+        else if (select == 5) {
+            // VẤN ĐỀ 5
+            printf("\n************ PROBLEM 5: GROUP CHECK OUT ************\n");
     
-    printf("Enter room of group's leader (from 0 to 11): ");
-    scanf("%d", &leaderRoom);
+            printf("Enter room of group's leader (from 0 to 11): ");
+            scanf("%d", &leaderRoom);
 
-    group = findGroup(groups, n, leaderRoom);
-    groupCheckOut(group);
-    printHotel();
+            group = findGroup(groups, n, leaderRoom);
+            groupCheckOut(group);
+            printHotel();
+        }
+
+        else break;
+    } 
 
     // KẾT THÚC
     freeAllGroups(groups, n);
